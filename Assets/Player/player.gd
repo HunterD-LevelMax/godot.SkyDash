@@ -2,14 +2,14 @@ extends CharacterBody3D
 
 # Настройки движения
 @export var speed: float = 5.0
-@export var sprint_speed: float = 8.0
-@export var jump_velocity: float = 6
-@export var gravity: float = 9.5
+@export var sprint_speed: float = 7.0
+@export var jump_velocity: float = 6.5
+@export var gravity: float = 9.8
 @export var rotation_speed: float = 10.0
 @export var sprint_stamina_max: float = 100.0
-@export var stamina_drain_rate: float = 20.0
-@export var stamina_regen_rate: float = 15.0
-@export var sprint_jump_multiplier: float = 1.08
+@export var stamina_drain_rate: float = 45.0
+@export var stamina_regen_rate: float = 10.0
+@export var sprint_jump_multiplier: float = 1.10
 @export var jump_buffer_time: float = 0.1  # Время буферизации ввода прыжка
 @export var coyote_time: float = 0.2  # Время койот-тайма для прыжка после покидания платформы
 @export var air_control_factor: float = 1.0  # Коэффициент управления в воздухе
@@ -42,8 +42,8 @@ var _coyote_timer: float = 0.0  # Таймер для койот-тайма
 var _was_sprinting: bool = false  # Сохраняем состояние спринта для койот-тайма
 
 # Константы
-const GOD_MODE_SPEED: float = 10.0
-const AIR_DAMPING: float = 0.5  # Скорость затухания горизонтальной скорости в воздухе
+const GOD_MODE_SPEED: float = 15.0
+const AIR_DAMPING: float = 0.4  # Скорость затухания горизонтальной скорости в воздухе
 
 # Скин персонажа
 @export var mesh: PackedScene =  preload("res://Assets/Characters/Bear/player_bear.tscn")
@@ -183,7 +183,9 @@ func _handle_sprint(delta: float) -> void:
 	else:
 		_is_sprinting = false
 		_current_speed = speed
-		_sprint_stamina = min(sprint_stamina_max, _sprint_stamina + stamina_regen_rate * delta)
+		# Регенерируем стамину только если игрок на земле
+		if is_on_floor():
+			_sprint_stamina = min(sprint_stamina_max, _sprint_stamina + stamina_regen_rate * delta)
 		animation_player.speed_scale = 1.0
 
 	# Обновление полоски стамины

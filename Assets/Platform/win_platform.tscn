@@ -1,34 +1,34 @@
 [gd_scene load_steps=6 format=3 uid="uid://bbuahk8c3d7ky"]
 
-[ext_resource type="Script" uid="uid://bw7ubqpamnaol" path="res://Assets/Scripts/win_platform.gd" id="1_ejpty"]
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qo0n7"]
-albedo_color = Color(0.743248, 0.576769, 0.345277, 1)
-emission_enabled = true
-emission = Color(0.73567, 0.52441, 0.289562, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_ku5jg"]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_43y5w"]
+[ext_resource type="Script" uid="uid://b828owfoff6jt" path="res://Assets/Platform/win_platform.gd" id="1_mblwi"]
+[ext_resource type="PackedScene" uid="uid://ceeucp33imjl" path="res://Assets/Models/tileMediumRed.glb" id="2_ncfwd"]
+[ext_resource type="PackedScene" uid="uid://dlwrmu3qqiowf" path="res://Assets/Models/flag_red.glb" id="3_65ovu"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_cxybm"]
-size = Vector3(0.93602, 0.444336, 0.94783)
+size = Vector3(1.90918, 0.710754, 1.95425)
 
-[node name="StaticBody3D" type="StaticBody3D"]
-transform = Transform3D(2.44282, 0, 0, 0, 0.173786, 0, 0, 0, 2.75227, 0, 0, 0)
-script = ExtResource("1_ejpty")
+[sub_resource type="BoxShape3D" id="BoxShape3D_43y5w"]
+size = Vector3(1.99573, 1.33789, 1)
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-material_override = SubResource("StandardMaterial3D_qo0n7")
-mesh = SubResource("BoxMesh_ku5jg")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("BoxShape3D_43y5w")
+[node name="WinPlatform" type="Node3D"]
+transform = Transform3D(1.5, 0, 0, 0, 0.4, 0, 0, 0, 2, 0, 0, 0)
+script = ExtResource("1_mblwi")
 
 [node name="Area3D" type="Area3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
-transform = Transform3D(1.04323, 0, 0, 0, 2.20584, 0, 0, 0, 1.03637, 0.00422633, 0.612854, -0.0017158)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0167716, 1.39041, 0.00264102)
 shape = SubResource("BoxShape3D_cxybm")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00164795, 0.834961, 0)
+shape = SubResource("BoxShape3D_43y5w")
+
+[node name="tileMediumRed" parent="StaticBody3D" instance=ExtResource("2_ncfwd")]
+
+[node name="flag_red" parent="." instance=ExtResource("3_65ovu")]
+transform = Transform3D(0.666667, 0, 0, 0, 2.5, 0, 0, 0, 0.5, 0, 1.5, -0.5)
 
 [connection signal="body_entered" from="Area3D" to="." method="_on_area_3d_body_entered"]

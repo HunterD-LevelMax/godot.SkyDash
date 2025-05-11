@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://btface6q5coic"]
 
-[ext_resource type="Script" uid="uid://dvfahajwyovar" path="res://Assets/Scripts/jump_bonus.gd" id="1_nt1to"]
+[ext_resource type="Script" uid="uid://b8875eg0of47o" path="res://Assets/Items/jump_bonus.gd" id="1_5o3uo"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tnfxp"]
 albedo_color = Color(0, 0, 0, 1)
@@ -13,13 +13,16 @@ material = SubResource("StandardMaterial3D_tnfxp")
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_mo3e1"]
 
-[node name="Area3D" type="Area3D"]
-script = ExtResource("1_nt1to")
+[node name="JumpBonus" type="Node3D"]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="Area3D" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.617514, 0)
+script = ExtResource("1_5o3uo")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Area3D"]
 mesh = SubResource("BoxMesh_iptch")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("BoxShape3D_mo3e1")
 
-[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_entered" from="Area3D" to="Area3D" method="_on_body_entered"]

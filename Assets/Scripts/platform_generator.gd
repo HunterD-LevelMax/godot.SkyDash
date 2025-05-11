@@ -14,88 +14,75 @@ var _active_platforms: Array[Node] = []
 
 # Свойства плоскости
 var _plane_size: Vector2
-var _plane_position: Vector3
+var _plane_position: Vector3  # Центр плоскости
+var _plane_surface_y: float  # Высота верхней поверхности плоскости
 var _last_platform_position: Vector3 = Vector3.ZERO
-
-# Значения плоскости по умолчанию
-const DEFAULT_PLANE_SIZE: Vector2 = Vector2(50.0, 50.0)
-const DEFAULT_PLANE_POSITION: Vector3 = Vector3.ZERO
 
 func _ready() -> void:
 	# Инициализация пула платформ
 	_initialize_platform_pool()
 
 func initialize_plane(plane: Node3D) -> void:
-	if not plane:
-		_plane_size = DEFAULT_PLANE_SIZE
-		_plane_position = DEFAULT_PLANE_POSITION
-		push_warning("Плоскость не найдена, используются значения по умолчанию")
-		return
-
-	var collision_shape: CollisionShape3D = _find_collision_shape(plane)
-	if collision_shape and collision_shape.shape is BoxShape3D:
-		var extents: Vector3 = collision_shape.shape.extents
-		var plane_scale: Vector3 = plane.scale
-		_plane_size = Vector2(extents.x * 2 * plane_scale.x, extents.z * 2 * plane_scale.z)
-		# Используем position вместо global_position, чтобы игнорировать поднятие Level
-		_plane_position = plane.position + Vector3(0, extents.y * plane_scale.y, 0)
-	else:
-		_plane_size = DEFAULT_PLANE_SIZE
-		_plane_position = DEFAULT_PLANE_POSITION
-		push_warning("Недопустимая форма коллизии плоскости, используются значения по умолчанию")
+	var plane_scale: Vector3 = plane.scale
+	_plane_size = Vector2(plane_scale.x, plane_scale.z)
+	_plane_position = plane.position
 
 func spawn_base_grid(params: Dictionary) -> void:
-	# Создание базовой сетки платформ
+	# Создание равномерной сетки платформ по всей площади Plane
 	var spacing: float = params.get("spacing", 6.0)
-	var offset: float = params.get("offset", 2.0)
-	var scale: Vector3 = params.get("scale", Vector3.ONE)
-
-	var platforms_x: int = int(_plane_size.x / spacing)
-	var platforms_z: int = int(_plane_size.y / spacing)
-	var half_x: float = _plane_size.x / 2.0
-	var half_z: float = _plane_size.y / 2.0
+	var platforms_x: int = int(_plane_size.x / spacing) + 1  # Количество платформ вдоль оси X
+	var platforms_z: int = int(_plane_size.y / spacing) + 1  # Количество платформ вдоль оси Z
+	var start_x: float = _plane_position.x - _plane_size.x / 2.0  # Начальная позиция по X
+	var start_z: float = _plane_position.z - _plane_size.y / 2.0  # Начальная позиция по Z
 
 	for i in range(platforms_x):
 		for j in range(platforms_z):
-			var pos_x: float = _plane_position.x - half_x + (i + 0.5) * spacing + randf_range(-offset, offset)
-			var pos_z: float = _plane_position.z - half_z + (j + 0.5) * spacing + randf_range(-offset, offset)
-			var pos_y: float = _plane_position.y
-			await _spawn_platform_with_delay(Vector3(pos_x, pos_y, pos_z), scale, 0.1)
+			var pos_x: float = start_x + i * (_plane_size.x / (platforms_x - 1)) if platforms_x > 1 else _plane_position.x
+			var pos_z: float = start_z + j * (_plane_size.y / (platforms_z - 1)) if platforms_z > 1 else _plane_position.z
+			# Спавним платформы чуть выше поверхности плоскости
+			var pos_y: float = _plane_surface_y + 0.5
+			await _spawn_platform_with_delay(Vector3(pos_x, pos_y, pos_z), 0.1)
 
 func spawn_clustered_path(params: Dictionary) -> void:
-	# Создание кластерного пути из платформ
-	var layer_count: int = params.get("layer_count", 5)
-	var cluster_size: int = params.get("cluster_size", 6)
-	var horizontal_spacing: float = params.get("horizontal_spacing", 3.0)
-	var vertical_spacing: float = params.get("vertical_spacing", 2.0)
-	var chaos: float = params.get("chaos", 0.5)
-	var difficulty: float = params.get("difficulty", 1.0)
-	var scale: Vector3 = params.get("scale", Vector3(4.0, 0.5, 3.0))
+	# Создание спирального пути платформ с постепенным подъёмом
+	var turns_count: int = params.get("turns_count", 5)         # Количество витков спирали
+	var platforms_per_turn: int = params.get("platforms_per_turn", 10) # Платформ на виток
+	var spiral_step: float = params.get("spiral_step", 5.0)    # Увеличение радиуса на виток
+	var vertical_step: float = params.get("vertical_step", 2.0) # Увеличение высоты на виток
+	var cluster_radius: float = params.get("cluster_radius", 2.0) # Радиус кластера
+	var difficulty: float = params.get("difficulty", 0.9)       # Модификатор плотности
 
-	var last_cluster_center: Vector3 = _plane_position
+	var max_radius: float = min(_plane_size.x, _plane_size.y) / 2.0 - cluster_radius
+	var current_height: float = _plane_surface_y + 0.5
 
-	for layer in range(layer_count):
-		var cluster_center: Vector3 = last_cluster_center + Vector3(
-			randf_range(-horizontal_spacing, horizontal_spacing),
-			vertical_spacing,
-			randf_range(-horizontal_spacing, horizontal_spacing)
-		)
+	for turn in range(turns_count):
+		var radius_step: float = (spiral_step * difficulty) * (turn + 1) / turns_count
+		radius_step = min(radius_step, max_radius)
+		for i in range(platforms_per_turn):
+			var angle: float = (i * 2.0 * PI / platforms_per_turn) + (turn * 2.0 * PI / platforms_per_turn)
+			var pos_x: float = _plane_position.x + cos(angle) * radius_step
+			var pos_z: float = _plane_position.z + sin(angle) * radius_step
+			# Ограничиваем платформы границами Plane
+			pos_x = clamp(pos_x, _plane_position.x - _plane_size.x / 2.0, _plane_position.x + _plane_size.x / 2.0)
+			pos_z = clamp(pos_z, _plane_position.z - _plane_size.y / 2.0, _plane_position.z + _plane_size.y / 2.0)
+			var pos_y: float = current_height + (turn * vertical_step * difficulty)
+			# Добавляем небольшую вариацию внутри кластера
+			var cluster_offset_x: float = randf_range(-cluster_radius, cluster_radius) * difficulty
+			var cluster_offset_z: float = randf_range(-cluster_radius, cluster_radius) * difficulty
+			pos_x += cluster_offset_x
+			pos_z += cluster_offset_z
+			await _spawn_platform_with_delay(Vector3(pos_x, pos_y, pos_z), 0.1)
 
-		for i in range(cluster_size):
-			var offset: Vector3 = Vector3(
-				randf_range(-1.0, 1.0) * horizontal_spacing * (1.0 + chaos),
-				0.0,
-				randf_range(-1.0, 1.0) * horizontal_spacing * (1.0 + chaos)
-			)
-			var position: Vector3 = cluster_center + offset * difficulty
-			await _spawn_platform_with_delay(position, scale, 0.1)
-
-		last_cluster_center = cluster_center
-
+		current_height += vertical_step * difficulty
+			
 func spawn_win_platform(callback: Callable) -> void:
 	# Создание платформы победы
 	var win_platform: Node = _win_platform_scene.instantiate()
-	win_platform.position = _last_platform_position + Vector3(2.0, 1.0, 2.0)
+	# Спавним платформу победы чуть выше последней платформы
+	var win_platform_y: float = _last_platform_position.y + 1.0
+	if win_platform_y < _plane_surface_y + 0.5:
+		win_platform_y = _plane_surface_y + 0.5
+	win_platform.position = _last_platform_position + Vector3(2.0, win_platform_y - _last_platform_position.y, 2.0)
 	get_parent().add_child(win_platform)
 	_active_platforms.append(win_platform)
 	if win_platform.has_signal("platform_win"):
@@ -109,34 +96,25 @@ func _initialize_platform_pool() -> void:
 		add_child(platform_instance)
 		_platform_pool.append(platform_instance)
 
-func _find_collision_shape(plane: Node3D) -> CollisionShape3D:
-	# Поиск компонента коллизии плоскости
-	for child in plane.get_children():
-		if child is CollisionShape3D:
-			return child
-	return null
-
-func _spawn_platform(position: Vector3, scale: Vector3) -> Node:
+func _spawn_platform(position: Vector3) -> Node:
 	# Создание платформы из пула
 	var platform_instance: Node = _get_platform_from_pool()
 	platform_instance.position = position
-	platform_instance.scale = scale
 	platform_instance.visible = true
 	_active_platforms.append(platform_instance)
 	_last_platform_position = position
 
 	# Создание бонусов на платформе
 	if randf() < 0.02: # 2% шанс появления бонуса прыжка
-		_spawn_bonus(_jump_bonus_scene, position + Vector3(0, 1, 0))
+		_spawn_bonus(_jump_bonus_scene, position + Vector3(0, 1.0, 0))
 	if randf() < 0.12: # 12% шанс появления монеты
-		_spawn_bonus(_coin_scene, position + Vector3(0, 1, 0))
-
+		_spawn_bonus(_coin_scene, position + Vector3(0, 1.0, 0))
 	return platform_instance
 
-func _spawn_platform_with_delay(position: Vector3, scale: Vector3, delay: float) -> void:
+func _spawn_platform_with_delay(position: Vector3, delay: float) -> void:
 	# Создание платформы с задержкой
 	await get_tree().create_timer(delay).timeout
-	_spawn_platform(position, scale)
+	_spawn_platform(position)
 
 func _spawn_bonus(bonus_scene: PackedScene, position: Vector3) -> void:
 	# Создание бонуса (монета или бонус прыжка)
