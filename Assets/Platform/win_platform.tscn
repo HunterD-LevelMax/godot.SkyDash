@@ -1,8 +1,8 @@
 [gd_scene load_steps=6 format=3 uid="uid://bbuahk8c3d7ky"]
 
-[ext_resource type="Script" uid="uid://b828owfoff6jt" path="res://Assets/Platform/win_platform.gd" id="1_mblwi"]
-[ext_resource type="PackedScene" uid="uid://ceeucp33imjl" path="res://Assets/Models/tileMediumRed.glb" id="2_ncfwd"]
-[ext_resource type="PackedScene" uid="uid://dlwrmu3qqiowf" path="res://Assets/Models/flag_red.glb" id="3_65ovu"]
+[ext_resource type="Script" uid="uid://bdu4xxeyugg16" path="res://Assets/Platform/win_platform.gd" id="1_mblwi"]
+[ext_resource type="PackedScene" uid="uid://bfv365bgr3tek" path="res://Assets/Models/tileMediumRed.glb" id="2_ncfwd"]
+[ext_resource type="PackedScene" uid="uid://pq6lkyg8pdqn" path="res://Assets/Models/flag_red.glb" id="3_65ovu"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_cxybm"]
 size = Vector3(1.90918, 0.710754, 1.95425)

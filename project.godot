@@ -21,6 +21,7 @@ Global="*res://Assets/Scripts/global.gd"
 
 [display]
 
+window/vsync/vsync_mode=0
 window/main_scene="res://Assets/Levels/menu_scene.tscn"
 
 [input]

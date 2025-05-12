@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://8rm6h32psd0v"]
 
-[ext_resource type="Script" uid="uid://e5msa1j5hcfd" path="res://Assets/Platform/standart_platform.gd" id="1_tua12"]
-[ext_resource type="PackedScene" uid="uid://rf4nox20l8x7" path="res://Assets/Models/tileMediumBlue.glb" id="2_s5556"]
+[ext_resource type="Script" uid="uid://b55iapcvbjblc" path="res://Assets/Platform/standart_platform.gd" id="1_tua12"]
+[ext_resource type="PackedScene" uid="uid://chci6u35eude0" path="res://Assets/Models/tileMediumBlue.glb" id="2_s5556"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2lq37"]
 size = Vector3(1.80942, 0.834326, 1.75129)

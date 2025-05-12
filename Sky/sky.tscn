@@ -1,27 +1,74 @@
-[gd_scene load_steps=5 format=3 uid="uid://cf6t4h2ekief0"]
+[gd_scene load_steps=11 format=3 uid="uid://cf6t4h2ekief0"]
 
-[ext_resource type="Shader" uid="uid://c25plykqo6ei4" path="res://Sky/sky.gdshader" id="1_uwcsa"]
+[ext_resource type="Shader" uid="uid://bhnluf74x6qlg" path="res://Sky/sky.gdshader" id="1_uwcsa"]
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_awrce"]
+[sub_resource type="Gradient" id="Gradient_uwcsa"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_uwcsa"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_yfaqj"]
+width = 1024
+height = 1024
+seamless = true
+color_ramp = SubResource("Gradient_uwcsa")
+noise = SubResource("FastNoiseLite_uwcsa")
+
+[sub_resource type="Gradient" id="Gradient_yfaqj"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_m5q8m"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_f44fy"]
+width = 1024
+height = 1024
+seamless = true
+color_ramp = SubResource("Gradient_yfaqj")
+noise = SubResource("FastNoiseLite_m5q8m")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_uwcsa"]
 shader = ExtResource("1_uwcsa")
-shader_parameter/skyColor = Color(0.502167, 0.838797, 0.920134, 1)
-shader_parameter/horizontalColor = Color(0.764213, 0.740361, 0.730088, 1)
+shader_parameter/sky_top_color = Color(0.525058, 0.841062, 0.984256, 1)
+shader_parameter/sky_horizon_color = Color(0.309571, 0.640913, 0.855287, 1)
+shader_parameter/sky_curve = 0.15
+shader_parameter/sky_energy = 1.0
+shader_parameter/sky_cover_modulate = Color(1, 1, 1, 1)
+shader_parameter/ground_bottom_color = Color(0.371145, 0.64246, 0.790923, 1)
+shader_parameter/ground_horizon_color = Color(0.309804, 0.639216, 0.854902, 1)
+shader_parameter/ground_curve = 0.126
+shader_parameter/ground_energy = 1.0
+shader_parameter/sun_angle_max = 0.12
+shader_parameter/sun_curve = 0.292
+shader_parameter/exposure = 1.0
+shader_parameter/cloud_texture = SubResource("NoiseTexture2D_yfaqj")
+shader_parameter/cloud_texture2 = SubResource("NoiseTexture2D_f44fy")
+shader_parameter/cloud_direction = Vector2(-1, 1)
+shader_parameter/cloud_direction2 = Vector2(-1, 1)
+shader_parameter/cloud_scale = Vector2(0.02, 0.02)
+shader_parameter/cloud_distance = 0.015
 
 [sub_resource type="Sky" id="Sky_uwcsa"]
-sky_material = SubResource("ShaderMaterial_awrce")
+sky_material = SubResource("ShaderMaterial_uwcsa")
+radiance_size = 2
 
 [sub_resource type="Environment" id="Environment_yfaqj"]
 background_mode = 2
 sky = SubResource("Sky_uwcsa")
 ambient_light_source = 3
-ambient_light_color = Color(0.436104, 0.788979, 0.942229, 1)
+ambient_light_sky_contribution = 0.6
+reflected_light_source = 2
 tonemap_mode = 2
+volumetric_fog_density = 0.1019
 
 [node name="Sky" type="Node3D"]
 
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.866023, -0.433016, 0.250001, 0, 0.499998, 0.866027, -0.500003, 0.749999, -0.43301, 0, 0, 0)
+light_energy = 1.5
+light_angular_distance = 0.5
+light_specular = 0.1
+shadow_enabled = true
+shadow_opacity = 0.95
+shadow_blur = 1.688
+directional_shadow_mode = 0
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_yfaqj")
-
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.866025, -0.433013, 0.25, 0, 0.5, 0.866025, -0.5, 0.75, -0.433013, 0, 0, 0)
-shadow_enabled = true
