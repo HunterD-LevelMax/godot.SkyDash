@@ -8,7 +8,7 @@
 size = Vector3(1.90918, 0.710754, 1.95425)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_43y5w"]
-size = Vector3(1.99573, 1.33789, 1)
+size = Vector3(1.99408, 1.33789, 2.0481)
 
 [node name="WinPlatform" type="Node3D"]
 transform = Transform3D(1.5, 0, 0, 0, 0.4, 0, 0, 0, 2, 0, 0, 0)
@@ -23,7 +23,7 @@ shape = SubResource("BoxShape3D_cxybm")
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00164795, 0.834961, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.00247258, 0.834961, 0.00183105)
 shape = SubResource("BoxShape3D_43y5w")
 
 [node name="tileMediumRed" parent="StaticBody3D" instance=ExtResource("2_ncfwd")]

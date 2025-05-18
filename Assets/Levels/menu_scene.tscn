@@ -127,10 +127,12 @@ size = Vector3(0.381348, 4.06732, 22.9138)
 [sub_resource type="TorusMesh" id="TorusMesh_c20vq"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rkygq"]
+size = Vector3(1.58331, 1, 1.67651)
 
 [node name="Menu" type="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 35, 0)
 script = ExtResource("1_6nk6q")
+
+[node name="Sky" parent="." instance=ExtResource("61_rkygq")]
 
 [node name="Plane" type="Node3D" parent="."]
 transform = Transform3D(30, 0, 0, 0, 1, 0, 0, 0, 30, 0, 0, 0)
@@ -491,19 +493,15 @@ transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, -0.004
 shape = SubResource("BoxShape3D_oxl8k")
 
 [node name="SkinChangerArea" type="Area3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.79334, 0.882835, -8.85404)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9.15122, 0.882835, -8.85404)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="SkinChangerArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.32782, -0.147277, 0.266234)
 mesh = SubResource("TorusMesh_c20vq")
 skeleton = NodePath("../..")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="SkinChangerArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.378805, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0160828, 0, -0.0128174)
 shape = SubResource("BoxShape3D_rkygq")
-
-[node name="Sky" parent="." instance=ExtResource("61_rkygq")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.34757, 0)
 
 [connection signal="body_entered" from="Start/StartArea" to="." method="_on_start_area_body_entered"]
 [connection signal="body_entered" from="Exit/ExitArea" to="." method="_on_exit_area_body_entered"]

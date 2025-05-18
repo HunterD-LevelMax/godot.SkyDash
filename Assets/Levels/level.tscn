@@ -30,7 +30,6 @@ material = SubResource("StandardMaterial3D_stmqa")
 [sub_resource type="BoxShape3D" id="BoxShape3D_ldbch"]
 
 [node name="Level" type="Node3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, 0)
 script = ExtResource("1_hsbfi")
 
 [node name="UI" parent="." instance=ExtResource("5_j60fc")]
@@ -82,6 +81,5 @@ transform = Transform3D(0.05, 0, 0, 0, 0.1, 0, 0, 0, 0.05, -0.459506, 0.602673, 
 [node name="PlatformGenerator" parent="." instance=ExtResource("8_nbnl2")]
 
 [node name="Sky" parent="." instance=ExtResource("7_jkw51")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.80664, 0)
 
 [connection signal="body_entered" from="Teleport" to="." method="_on_teleport_body_entered"]

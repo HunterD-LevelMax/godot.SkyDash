@@ -1,6 +1,3 @@
-
-// NOTE: Shader automatically converted from Godot Engine 4.4.1.stable's ProceduralSkyMaterial.
-
 shader_type sky;
 render_mode use_debanding;
 
@@ -84,6 +81,6 @@ void sky() {
 	clouds = clouds - smoothstep(0.0, EYEDIR.y, cloud_distance);
 	clouds = clamp(clouds,0,1);
 	sky += clouds;
-	
+
 	COLOR = mix(ground, sky, step(0.0, EYEDIR.y)) * exposure;
 }

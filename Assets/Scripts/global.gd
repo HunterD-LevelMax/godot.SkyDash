@@ -2,7 +2,7 @@ extends Node
 
 # Переменная для хранения пути к текущему скину
 var current_skin_path: String = "res://Assets/Characters/Bear/player_bear.tscn"
-var current_layer = 10
+var current_layer = 100
 
 # Функция для установки пути к скину
 func set_skin_path(new_path: String) -> void:

@@ -34,13 +34,16 @@ func show_exit_confirmation():
 	add_child(dialog)
 	dialog.popup_centered()
 
-
 func _on_area_3d_body_entered(body: Node3D) -> void:
 	var skin_bear = "res://Assets/Characters/Bear/player_bear.tscn"
 	var skin_man = "res://Assets/Characters/Man/player_man.tscn"
 	var skin_gypsy = "res://Assets/Characters/Gypsy/player_gypsy.tscn"
+	
 	var skins := [skin_bear,skin_man,skin_gypsy]
 	
 	if body.name == "Player":
 			if skins.size() > 0:
-				body.change_skin(skins[randi() % skins.size()])
+				var a = skins[randi() % skins.size()]
+				while(a != Global.get_skin_path()):
+					body.change_skin(a)
+				
